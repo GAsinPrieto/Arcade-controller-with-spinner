@@ -1,16 +1,21 @@
-# DaemonBite-Arcade-Encoder
-This is an arcade controller project for the MiSTer FPGA project and any other device accepting USB HID joysticks using an Arduino Pro Micro. This project can also be used to create a NeoGeo/Atari/Commodore/Amiga controller to USB adapters.
+# USB Arcade two player controller with spinner
+## Introduction
+Firmware for the Arcade two player controller with spinner built by [Antonio Villena](https://www.antoniovillena.es/).
 
-**PLEASE NOTE!** This project is open source and was aimed as a DIY alternative to commercial arcade encoders. I kindly ask you not to make a business out of selling arcade encoders using this code. I sell a version with more features in my shop at https://daemonbite.com.
+As it is based on MickGyver's work, the input lag for this adapter is also minimal.
 
-The input lag for an arcade controller or adapter built around this project is minimal. Here is the result from a test with a 1ms polling rate on a MiSTer with this project:
+## Building the projects
+You will need the [Arduino IDE](https://www.arduino.cc/en/Main/Software) to build the project. Download the repository via the "Clone or download" button, open the project (.ino extension) in the IDE and select "Arduino Leonardo" in Tools / Board. Connect the Arduino to a USB port and build/upload from Scetch / Upload.
 
-| Samples | Average | Max | Min | Std Dev |
-| ------ | ------ | ------ | ------ | ------ | 
-| 13962 | 0.74ms | 1.28ms | 0.23ms | 0.29ms |
+You have to install the great [YetAnotherArduinoPcIntLibrary](https://github.com/paulo-raca/YetAnotherArduinoPcIntLibrary) for the management of PCINT.
 
-## Programming the Arduino
-1. Download the free Arduino IDE: https://www.arduino.cc/en/main/software
-2. Connect the Arduino Pro Micro to a USB port and let the drivers install.
-3. Choose the correct board and virtual COM port in the IDE.
-3. Compile/Upload the project.
+## License
+This project is licensed under the GNU General Public License v3.0.
+
+## Credits
+The great work by MickGyver and his [DaemonBite-Arcade-Encoder](https://github.com/MickGyver/DaemonBite-Arcade-Encoder), from where I took the code for the base and two player arcade adapter.
+
+Also, the great work by Niels3RT and his [SpinJoy - Spinner and Joystick combo](https://github.com/Niels3RT/SpinJoy), from where I took the code for the spinner.
+
+And last but not least, thanks to [Antonio Villena](https://www.antoniovillena.es/) for the ideas and prompts.
+

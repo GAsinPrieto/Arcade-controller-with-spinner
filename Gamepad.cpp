@@ -25,7 +25,7 @@
  */
 #include "Gamepad.h"
 
-static const uint8_t _hidReportDescriptor[] PROGMEM = {
+static const uint8_t _hidReportDescriptor1[] PROGMEM = {
   0x05, 0x01,                       // USAGE_PAGE (Generic Desktop)
   0x09, 0x04,                       // USAGE (Joystick)
   0xa1, 0x01,                       // COLLECTION (Application)
@@ -81,7 +81,7 @@ static const uint8_t _hidReportDescriptor[] PROGMEM = {
 };
 
 
-static const uint8_t _hidReportDescriptor1[] PROGMEM = {
+static const uint8_t _hidReportDescriptor2[] PROGMEM = {
   0x05, 0x01,                       // USAGE_PAGE (Generic Desktop)
   0x09, 0x04,                       // USAGE (Joystick)
   0xa1, 0x01,                       // COLLECTION (Application)
@@ -128,13 +128,6 @@ static const uint8_t _hidReportDescriptor1[] PROGMEM = {
   0xc0,                             // END_COLLECTION 
 };
 
-Gamepad_::Gamepad_(void) : PluggableUSBModule(1, 1, epType), protocol(HID_REPORT_PROTOCOL), idle(1)
-{
-  epType[0] = EP_TYPE_INTERRUPT_IN;
-  PluggableUSB().plug(this);
-}
-
-
 Gamepad1_::Gamepad1_(void) : PluggableUSBModule(1, 1, epType), protocol(HID_REPORT_PROTOCOL), idle(1)
 {
   epType[0] = EP_TYPE_INTERRUPT_IN;
@@ -142,19 +135,14 @@ Gamepad1_::Gamepad1_(void) : PluggableUSBModule(1, 1, epType), protocol(HID_REPO
 }
 
 
-
-
-
-int Gamepad_::getInterface(uint8_t* interfaceCount)
+Gamepad2_::Gamepad2_(void) : PluggableUSBModule(1, 1, epType), protocol(HID_REPORT_PROTOCOL), idle(1)
 {
-  *interfaceCount += 1; // uses 1
-  HIDDescriptor hidInterface = {
-    D_INTERFACE(pluggedInterface, 1, USB_DEVICE_CLASS_HUMAN_INTERFACE, HID_SUBCLASS_NONE, HID_PROTOCOL_NONE),
-    D_HIDREPORT(sizeof(_hidReportDescriptor)),
-    D_ENDPOINT(USB_ENDPOINT_IN(pluggedEndpoint), USB_ENDPOINT_TYPE_INTERRUPT, USB_EP_SIZE, 0x01)
-  };
-  return USB_SendControl(0, &hidInterface, sizeof(hidInterface));
+  epType[0] = EP_TYPE_INTERRUPT_IN;
+  PluggableUSB().plug(this);
 }
+
+
+
 
 
 int Gamepad1_::getInterface(uint8_t* interfaceCount)
@@ -169,23 +157,17 @@ int Gamepad1_::getInterface(uint8_t* interfaceCount)
 }
 
 
-
-
-int Gamepad_::getDescriptor(USBSetup& setup)
+int Gamepad2_::getInterface(uint8_t* interfaceCount)
 {
-  // Check if this is a HID Class Descriptor request
-  if (setup.bmRequestType != REQUEST_DEVICETOHOST_STANDARD_INTERFACE) { return 0; }
-  if (setup.wValueH != HID_REPORT_DESCRIPTOR_TYPE) { return 0; }
-
-  // In a HID Class Descriptor wIndex cointains the interface number
-  if (setup.wIndex != pluggedInterface) { return 0; }
-
-  // Reset the protocol on reenumeration. Normally the host should not assume the state of the protocol
-  // due to the USB specs, but Windows and Linux just assumes its in report mode.
-  protocol = HID_REPORT_PROTOCOL;
-
-  return USB_SendControl(TRANSFER_PGM, _hidReportDescriptor, sizeof(_hidReportDescriptor));
+  *interfaceCount += 1; // uses 1
+  HIDDescriptor hidInterface = {
+    D_INTERFACE(pluggedInterface, 1, USB_DEVICE_CLASS_HUMAN_INTERFACE, HID_SUBCLASS_NONE, HID_PROTOCOL_NONE),
+    D_HIDREPORT(sizeof(_hidReportDescriptor2)),
+    D_ENDPOINT(USB_ENDPOINT_IN(pluggedEndpoint), USB_ENDPOINT_TYPE_INTERRUPT, USB_EP_SIZE, 0x01)
+  };
+  return USB_SendControl(0, &hidInterface, sizeof(hidInterface));
 }
+
 
 
 
@@ -207,46 +189,23 @@ int Gamepad1_::getDescriptor(USBSetup& setup)
 
 
 
-
-
-bool Gamepad_::setup(USBSetup& setup)
+int Gamepad2_::getDescriptor(USBSetup& setup)
 {
-  if (pluggedInterface != setup.wIndex) {
-    return false;
-  }
+  // Check if this is a HID Class Descriptor request
+  if (setup.bmRequestType != REQUEST_DEVICETOHOST_STANDARD_INTERFACE) { return 0; }
+  if (setup.wValueH != HID_REPORT_DESCRIPTOR_TYPE) { return 0; }
 
-  uint8_t request = setup.bRequest;
-  uint8_t requestType = setup.bmRequestType;
+  // In a HID Class Descriptor wIndex cointains the interface number
+  if (setup.wIndex != pluggedInterface) { return 0; }
 
-  if (requestType == REQUEST_DEVICETOHOST_CLASS_INTERFACE)
-  {
-    if (request == HID_GET_REPORT) {
-      // TODO: HID_GetReport();
-      return true;
-    }
-    if (request == HID_GET_PROTOCOL) {
-      // TODO: Send8(protocol);
-      return true;
-    }
-  }
+  // Reset the protocol on reenumeration. Normally the host should not assume the state of the protocol
+  // due to the USB specs, but Windows and Linux just assumes its in report mode.
+  protocol = HID_REPORT_PROTOCOL;
 
-  if (requestType == REQUEST_HOSTTODEVICE_CLASS_INTERFACE)
-  {
-    if (request == HID_SET_PROTOCOL) {
-      protocol = setup.wValueL;
-      return true;
-    }
-    if (request == HID_SET_IDLE) {
-      idle = setup.wValueL;
-      return true;
-    }
-    if (request == HID_SET_REPORT)
-    {
-    }
-  }
-
-  return false;
+  return USB_SendControl(TRANSFER_PGM, _hidReportDescriptor2, sizeof(_hidReportDescriptor2));
 }
+
+
 
 
 
@@ -291,31 +250,72 @@ bool Gamepad1_::setup(USBSetup& setup)
 
 
 
-
-
-
-
-void Gamepad_::reset()
+bool Gamepad2_::setup(USBSetup& setup)
 {
-  _GamepadReport.X = 0;
-  _GamepadReport.Y = 0;
-  _GamepadReport.Z = 0;
-  _GamepadReport.spinner = 0;
-  _GamepadReport.buttons = 0;
-  _GamepadReport.hat = 15; // Neutral
-  this->send();
+  if (pluggedInterface != setup.wIndex) {
+    return false;
+  }
+
+  uint8_t request = setup.bRequest;
+  uint8_t requestType = setup.bmRequestType;
+
+  if (requestType == REQUEST_DEVICETOHOST_CLASS_INTERFACE)
+  {
+    if (request == HID_GET_REPORT) {
+      // TODO: HID_GetReport();
+      return true;
+    }
+    if (request == HID_GET_PROTOCOL) {
+      // TODO: Send8(protocol);
+      return true;
+    }
+  }
+
+  if (requestType == REQUEST_HOSTTODEVICE_CLASS_INTERFACE)
+  {
+    if (request == HID_SET_PROTOCOL) {
+      protocol = setup.wValueL;
+      return true;
+    }
+    if (request == HID_SET_IDLE) {
+      idle = setup.wValueL;
+      return true;
+    }
+    if (request == HID_SET_REPORT)
+    {
+    }
+  }
+
+  return false;
 }
+
+
+
 
 
 
 
 void Gamepad1_::reset()
 {
-  _GamepadReport1.X = 0;
-  _GamepadReport1.Y = 0;
-  _GamepadReport1.Z = 0;
-  _GamepadReport1.buttons = 0;
-  _GamepadReport1.hat = 15; // Neutral
+  _Gamepad1Report.X = 0;
+  _Gamepad1Report.Y = 0;
+  _Gamepad1Report.Z = 0;
+  _Gamepad1Report.spinner = 0;
+  _Gamepad1Report.buttons = 0;
+  _Gamepad1Report.hat = 15; // Neutral
+  this->send();
+}
+
+
+
+
+void Gamepad2_::reset()
+{
+  _Gamepad2Report.X = 0;
+  _Gamepad2Report.Y = 0;
+  _Gamepad2Report.Z = 0;
+  _Gamepad2Report.buttons = 0;
+  _Gamepad2Report.hat = 15; // Neutral
   this->send();
 }
 
@@ -323,18 +323,18 @@ void Gamepad1_::reset()
 
 
 
-void Gamepad_::send() 
-{
-  USB_Send(pluggedEndpoint | TRANSFER_RELEASE, &_GamepadReport, sizeof(GamepadReport));
-}
-
 void Gamepad1_::send() 
 {
-  USB_Send(pluggedEndpoint | TRANSFER_RELEASE, &_GamepadReport1, sizeof(GamepadReport1));
+  USB_Send(pluggedEndpoint | TRANSFER_RELEASE, &_Gamepad1Report, sizeof(Gamepad1Report));
+}
+
+void Gamepad2_::send() 
+{
+  USB_Send(pluggedEndpoint | TRANSFER_RELEASE, &_Gamepad2Report, sizeof(Gamepad2Report));
 }
 
 
-uint8_t Gamepad_::getShortName(char *name)
+uint8_t Gamepad1_::getShortName(char *name)
 {
   if(!next) 
   {
@@ -344,7 +344,7 @@ uint8_t Gamepad_::getShortName(char *name)
   return 0;
 }
 
-uint8_t Gamepad1_::getShortName(char *name)
+uint8_t Gamepad2_::getShortName(char *name)
 {
   if(!next) 
   {

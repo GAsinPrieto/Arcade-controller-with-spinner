@@ -37,7 +37,7 @@ typedef struct {
   int8_t X;
   int8_t Y;
   int8_t Z; 
-} GamepadReport;
+} Gamepad1Report;
 
 typedef struct {
   uint16_t buttons : 12;
@@ -45,31 +45,7 @@ typedef struct {
   int8_t X;
   int8_t Y;
   int8_t Z; 
-} GamepadReport1;
-
-
-class Gamepad_ : public PluggableUSBModule
-{  
-  private:
-    uint8_t reportId;
-
-  protected:
-    int getInterface(uint8_t* interfaceCount);
-    int getDescriptor(USBSetup& setup);
-    uint8_t getShortName(char *name);
-    bool setup(USBSetup& setup);
-    
-    uint8_t epType[1];
-    uint8_t protocol;
-    uint8_t idle;
-    
-  public:
-    GamepadReport _GamepadReport;
-    Gamepad_(void);
-    void reset(void);
-    void send();
-};
-
+} Gamepad2Report;
 
 
 class Gamepad1_ : public PluggableUSBModule
@@ -88,8 +64,32 @@ class Gamepad1_ : public PluggableUSBModule
     uint8_t idle;
     
   public:
-    GamepadReport1 _GamepadReport1;
+    Gamepad1Report _Gamepad1Report;
     Gamepad1_(void);
+    void reset(void);
+    void send();
+};
+
+
+
+class Gamepad2_ : public PluggableUSBModule
+{  
+  private:
+    uint8_t reportId;
+
+  protected:
+    int getInterface(uint8_t* interfaceCount);
+    int getDescriptor(USBSetup& setup);
+    uint8_t getShortName(char *name);
+    bool setup(USBSetup& setup);
+    
+    uint8_t epType[1];
+    uint8_t protocol;
+    uint8_t idle;
+    
+  public:
+    Gamepad2Report _Gamepad2Report;
+    Gamepad2_(void);
     void reset(void);
     void send();
 };

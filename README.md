@@ -16,8 +16,8 @@ First time you use the adapter (and first time you change your setup, i.e. you a
 
 To indicate that:
 
-### You want to use the Spinner: press Player 1 UP while resetting (connecting USB or powering ON) your adapter.
-### You want to use B5 and B6 on Player 2: press Player 1 DOWN while resetting (connecting USB or powering ON) your adapter. Keep in mind that if you leave the enconder connected, you may register B5 and/or B6 phantom pushes.
+* You want to use the Spinner: press Player 1 UP while resetting (connecting USB or powering ON) your adapter.
+* You want to use B5 and B6 on Player 2: press Player 1 DOWN while resetting (connecting USB or powering ON) your adapter. Keep in mind that if you leave the enconder connected, you may register B5 and/or B6 phantom pushes.
 
 You only have to do this ONCE, as the value is persistent (stored in EEPROM). Of course, if you change your setup (with/out spinner), you have to do it again.
 

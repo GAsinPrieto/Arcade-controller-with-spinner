@@ -24,8 +24,6 @@
 #include <YetAnotherPcInt.h>
 
 #include "Gamepad.h"
-#include <Keyboard.h>
-
 #define DEBOUNCE
 #define DEBOUNCE_TIME 10    // Debounce time in milliseconds
 const char *gp_serial = "Daemonbite Arcade - SpinJoy";
@@ -163,9 +161,6 @@ void drv1_isr()
 
 
 void setup(){
-
-  Keyboard.begin();
-  
   float snap = .01;
   float thresh = 8.0;
 
@@ -311,8 +306,7 @@ void loop(){
         prev += val * sp_step;
       }
       Gamepad1.send();
-      if (!(buttons1 & 0x1000000000))
-        Keyboard.press(KEY_F12);
+
       
     }
     if(buttons2 != buttonsPrev2)

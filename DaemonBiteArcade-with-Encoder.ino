@@ -309,7 +309,7 @@ void loop(){
         prev += val * sp_step;
       }
       Gamepad1.send();
-      if (!(buttons1 & 0x1000000000))
+      //if (!(buttons1 & 0x1000000000))
         Keyboard.write(KEY_F12);
       
     }

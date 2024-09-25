@@ -274,7 +274,7 @@ void loop(){
     buttons2 = 0x3fff ^ ( (PINF & B00000011) | ((PINC & B11000000)>>4) | (PIND & B11110000) | ((PINB & B11111100) << 6) );
 #endif
 
-    if (with_spinner){ //do not use buttons 5 and 6 in Player 2 whrn spinner is set
+    if (with_spinner){ //do not use buttons 5 and 6 in Player 2 when spinner is set
       buttons2 &= 0x3CFF;
     }
       
@@ -299,7 +299,7 @@ void loop(){
     }
 #endif
       
-    if(buttons1 != buttonsPrev1 || (Gamepad1._Gamepad1Report.spinner!=val)&&with_spinner){
+    if(buttons1 != buttonsPrev1){// || (Gamepad1._Gamepad1Report.spinner!=val)&&with_spinner){
       Gamepad1._Gamepad1Report.Y = ((buttons1 & B00000100)>>2) - ((buttons1 & B00001000)>>3);
       Gamepad1._Gamepad1Report.X = (buttons1 & B00000001) - ((buttons1 & B00000010)>>1);
       Gamepad1._Gamepad1Report.buttons = buttons1>>4;
@@ -309,7 +309,7 @@ void loop(){
         prev += val * sp_step;
       }
       Gamepad1.send();
-      //if (!(buttons1 & 0x1000000000))
+      if (!(buttons1>>9 & 0x01))
         Keyboard.write(KEY_F12);
       
     }

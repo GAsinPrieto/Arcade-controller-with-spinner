@@ -164,7 +164,7 @@ void drv1_isr()
 
 void setup(){
 
-  Keyboard.begin();
+  
   
   float snap = .01;
   float thresh = 8.0;
@@ -184,10 +184,6 @@ void setup(){
   Gamepad1.reset();
   Gamepad2.reset();
   delay(1000);
-
-
-
-  
   
     #ifdef DEBOUNCE
   millisNow = millis();
@@ -246,6 +242,8 @@ void setup(){
   // read auto_max from eeprom
   ee_auto_max_read();
 #endif
+
+  Keyboard.begin();
 }
 
 #ifdef MOUSE
@@ -312,7 +310,7 @@ void loop(){
       }
       Gamepad1.send();
       if (!(buttons1 & 0x1000000000))
-        Keyboard.press(KEY_F12);
+        Keyboard.write(KEY_F12);
       
     }
     if(buttons2 != buttonsPrev2)

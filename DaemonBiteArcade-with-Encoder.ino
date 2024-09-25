@@ -299,7 +299,7 @@ void loop(){
     }
 #endif
       
-    if(buttons1 != buttonsPrev1 || Gamepad1._Gamepad1Report.spinner!=val){
+    if(buttons1 != buttonsPrev1 || (Gamepad1._Gamepad1Report.spinner!=val)&with_spinner){
       Gamepad1._Gamepad1Report.Y = ((buttons1 & B00000100)>>2) - ((buttons1 & B00001000)>>3);
       Gamepad1._Gamepad1Report.X = (buttons1 & B00000001) - ((buttons1 & B00000010)>>1);
       Gamepad1._Gamepad1Report.buttons = buttons1>>4;

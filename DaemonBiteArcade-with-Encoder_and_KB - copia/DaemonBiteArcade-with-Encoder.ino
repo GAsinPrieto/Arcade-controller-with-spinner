@@ -24,8 +24,6 @@
 #include <YetAnotherPcInt.h>
 
 #include "Gamepad.h"
-#include <Keyboard.h>
-
 #define DEBOUNCE
 #define DEBOUNCE_TIME 10    // Debounce time in milliseconds
 const char *gp_serial = "Daemonbite Arcade - SpinJoy";
@@ -163,9 +161,6 @@ void drv1_isr()
 
 
 void setup(){
-
-  
-  
   float snap = .01;
   float thresh = 8.0;
 
@@ -184,6 +179,10 @@ void setup(){
   Gamepad1.reset();
   Gamepad2.reset();
   delay(1000);
+
+
+
+  
   
     #ifdef DEBOUNCE
   millisNow = millis();
@@ -242,8 +241,6 @@ void setup(){
   // read auto_max from eeprom
   ee_auto_max_read();
 #endif
-
-  Keyboard.begin();
 }
 
 #ifdef MOUSE
@@ -274,7 +271,7 @@ void loop(){
     buttons2 = 0x3fff ^ ( (PINF & B00000011) | ((PINC & B11000000)>>4) | (PIND & B11110000) | ((PINB & B11111100) << 6) );
 #endif
 
-    if (with_spinner){ //do not use buttons 5 and 6 in Player 2 when spinner is set
+    if (with_spinner){ //do not use buttons 5 and 6 in Player 2 whrn spinner is set
       buttons2 &= 0x3CFF;
     }
       
@@ -299,7 +296,7 @@ void loop(){
     }
 #endif
       
-    if(buttons1 != buttonsPrev1){// || (Gamepad1._Gamepad1Report.spinner!=val)&&with_spinner){
+    if(buttons1 != buttonsPrev1 || Gamepad1._Gamepad1Report.spinner!=val){
       Gamepad1._Gamepad1Report.Y = ((buttons1 & B00000100)>>2) - ((buttons1 & B00001000)>>3);
       Gamepad1._Gamepad1Report.X = (buttons1 & B00000001) - ((buttons1 & B00000010)>>1);
       Gamepad1._Gamepad1Report.buttons = buttons1>>4;
@@ -309,8 +306,7 @@ void loop(){
         prev += val * sp_step;
       }
       Gamepad1.send();
-      if (!(buttons1>>9 & 0x01))
-        Keyboard.write(KEY_F12);
+
       
     }
     if(buttons2 != buttonsPrev2)

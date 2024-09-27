@@ -325,7 +325,7 @@ void loop(){
         prev += val * sp_step;
       }
       Gamepad1.send();
-      if (!(buttons1>>16 & 0x1))
+      if (!(buttons1>>15 & 0x1))
         Keyboard.press(KEY_F12);
       else
         Keyboard.releaseAll();  
